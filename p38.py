@@ -24,10 +24,55 @@ Description:
     the concatenated product of an integer with (1,2, ... , n) where n > 1?
 
 Notes:
-    <notes>
+    is there any good way to do this?
+
+    First, note: for a given A and range (1, ..., n), we have a final product
+    of
+
+        (A * n) + (A * (n - 1)) * 10**("length of (A * n)") + ...
+
+    So there is a naiv-ish way to reconstruct this. How can we calculate that
+    "length of ..." part? len(str(A * n))
+
+    The easy / naive way is just this:
+
+        digit length    max n
+        ------------    -----
+        1               9
+        2               5
+        3               3
+        4               2
+
+    I can wrap this in a better generator, or just make that the function
 
 """
 
+
+def mult_cat(a, n):
+    return ''.join([str(a * i) for i in range(1, n + 1)])
+
+
+def is_pandigital(pd):
+    return ''.join(sorted(pd)) == '123456789'
+
+
 if __name__ == '__main__':
 
-    pass
+    a, n = 1, 1
+
+    pandigitals = set()
+
+    mc = mult_cat(a, n)
+    while len(str(a)) < 5:
+        print a
+        while len(mc) <= 9:
+            n += 1
+            mc = mult_cat(a, n)
+            if is_pandigital(mc):
+                pandigitals.add((a, n, mc))
+        n = 1
+        a += 1
+        mc = mult_cat(a, n)
+
+    print pandigitals
+    print max(pandigitals, key=lambda x: int(x[2]))
